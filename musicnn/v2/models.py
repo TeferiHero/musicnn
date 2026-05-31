@@ -57,8 +57,8 @@ def build_musicnn(x,  num_classes, num_filt_frontend=1.6, num_filt_midend=64, nu
     temporal = tf.concat([frontend_features_list[2], frontend_features_list[3], frontend_features_list[4]], 2)
     # [extract features] mid-end features
     cnn1, cnn2, cnn3 = midend_features_list[1], midend_features_list[2], midend_features_list[3]
-    mean_pool = tf.squeeze(mean_pool, [2])
-    max_pool = tf.squeeze(max_pool, [2])
+    mean_pool = tf.keras.ops.squeeze(mean_pool, [2])
+    max_pool = tf.keras.ops.squeeze(max_pool, [2])
 
     return logits, timbral, temporal, cnn1, cnn2, cnn3, mean_pool, max_pool, penultimate
 
@@ -128,7 +128,7 @@ def timbral_block(inputs, filters, kernel_size,  padding="valid", activation="re
         strides=(1, x.shape[2])
     )(x)
 
-    return tf.squeeze(pool, axis=2)
+    return tf.keras.ops.squeeze(pool, axis=2)
 
 def tempo_block(inputs, filters, kernel_size,  padding="same", activation="relu"):
 
@@ -147,7 +147,7 @@ def tempo_block(inputs, filters, kernel_size,  padding="same", activation="relu"
         strides=(1, width)
     )(x)
 
-    return tf.squeeze(pool, axis=2)
+    return tf.keras.ops.squeeze(pool, axis=2)
 
 def midend(front_end_output,  num_filt):
 
