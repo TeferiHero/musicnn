@@ -65,7 +65,7 @@ def build_musicnn(x,  num_classes, num_filt_frontend=1.6, num_filt_midend=64, nu
 
 def frontend(x,  yInput, num_filt, type):
 
-    expand_input = tf.expand_dims(x, 3)
+    expand_input = tf.keras.ops.expand_dims(x, 3)
     normalized_input = tf.keras.layers.BatchNormalization()(expand_input)
 
     if 'timbral' in type:
@@ -151,7 +151,7 @@ def tempo_block(inputs, filters, kernel_size,  padding="same", activation="relu"
 
 def midend(front_end_output,  num_filt):
 
-    front_end_output = tf.expand_dims(front_end_output, axis=3)
+    front_end_output = tf.keras.ops.expand_dims(front_end_output, axis=3)
 
     # conv layer 1
     x = tf.pad(front_end_output, [[0, 0], [3, 3], [0, 0], [0, 0]], "CONSTANT")
@@ -230,7 +230,7 @@ import tensorflow as tf
 
 def vgg(x, num_classes, num_filters=32):
 
-    x = tf.expand_dims(x, axis=3)
+    x = tf.keras.ops.expand_dims(x, axis=3)
 
     x = tf.keras.layers.BatchNormalization()(x)
 
