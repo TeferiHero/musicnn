@@ -1,6 +1,7 @@
 .ipynb_checkpoints/
 .ipynb
 musicnn/__pycache__/
+fma/__pycache__/
 *.tags
 build/*
 dist/*
