@@ -111,9 +111,9 @@ def retrain(model_name='GENRES_MTT_musicnn', extract_features=True):
     )
 
     train_ds, val_ds, test_ds = get_dataset(augument_training=True)
-    modelv2.compile(optimizer='adam',
-              loss=keras.losses.SparseCategoricalCrossentropy(from_logits=False),
-              metrics=['accuracy'])
+    modelv2.compile(optimizer='adamw',
+                    loss=keras.losses.SparseCategoricalCrossentropy(from_logits=False),
+                    metrics=['accuracy'])
     
     modelv2.summary()
 
