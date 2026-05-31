@@ -36,7 +36,7 @@ def build_musicnn(x,  num_classes, num_filt_frontend=1.6, num_filt_midend=64, nu
     ### front-end ### musically motivated CNN
     frontend_features_list = frontend(x, config.N_MELS, num_filt=1.6, type='7774timbraltemporal')
     # concatnate features coming from the front-end
-    frontend_features = tf.concat(frontend_features_list, 2)
+    frontend_features = tf.keras.ops.concatenate(frontend_features_list, 2)
 
     
     ### mid-end ### dense layers
@@ -47,14 +47,14 @@ def build_musicnn(x,  num_classes, num_filt_frontend=1.6, num_filt_midend=64, nu
     for i in midend_features_list:
         print(i.shape)
 
-    midend_features = tf.concat(midend_features_list, 2)
+    midend_features = tf.keras.ops.concatenate(midend_features_list, 2)
 
     ### back-end ### temporal pooling
     logits, penultimate, mean_pool, max_pool = backend(midend_features,  num_classes, num_units_backend, type='globalpool_dense')
 
     # [extract features] temporal and timbral features from the front-end
-    timbral = tf.concat([frontend_features_list[0], frontend_features_list[1]], 2)
-    temporal = tf.concat([frontend_features_list[2], frontend_features_list[3], frontend_features_list[4]], 2)
+    timbral = tf.keras.ops.concatenate([frontend_features_list[0], frontend_features_list[1]], 2)
+    temporal = tf.keras.ops.concatenate([frontend_features_list[2], frontend_features_list[3], frontend_features_list[4]], 2)
     # [extract features] mid-end features
     cnn1, cnn2, cnn3 = midend_features_list[1], midend_features_list[2], midend_features_list[3]
     mean_pool = tf.keras.ops.squeeze(mean_pool, [2])
@@ -210,7 +210,7 @@ def backend(feature_map, num_classes, output_units, type=None):
     max_pool = tf.reduce_max(feature_map, axis=1)
     mean_pool, var_pool = tf.nn.moments(feature_map, axes=[1])
 
-    tmp_pool = tf.concat([max_pool, mean_pool], axis=2)
+    tmp_pool = tf.keras.ops.concatenate([max_pool, mean_pool], axis=2)
 
     x = tf.keras.layers.Flatten()(tmp_pool)
 
