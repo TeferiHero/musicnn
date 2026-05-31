@@ -98,8 +98,12 @@ def retrain(model_name='GENRES_MTT_musicnn', extract_features=True):
         inputs=orig_model.input,
         outputs=orig_model.layers[-2].output
     )
+    
     x_orig = base_model.output
-    outputs = tf.keras.layers.Dense(num_classes_new, activation="softmax")(x_orig)
+    dense1 = tf.keras.layers.Dense(512, activation="relu")(x_orig)
+    dropout = tf.keras.layers.Dropout(0.3)(dense1)
+    outputs = tf.keras.layers.Dense(num_classes_new, activation="softmax")(dropout)
+    
     base_model.trainable = False
     modelv2 = tf.keras.Model(
         inputs=base_model.input,
