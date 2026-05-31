@@ -311,8 +311,8 @@ def get_dataset(all_noise_ratio = None, train_noise_ratio = None, augument_train
 
     
 
-
 import matplotlib.pyplot as plt
+
 def visualize_dataset(augument_training=False):
     train, val, test = get_dataset(augument_training=augument_training)
     import tensorflow as tf
@@ -343,4 +343,5 @@ def visualize_dataset(augument_training=False):
     plt.title("Mel Spectrogram (3 seconds)")
 
     plt.tight_layout()
-    plt.show()
+
+    plt.savefig("plot.png", dpi=300, bbox_inches="tight")
