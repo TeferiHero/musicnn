@@ -166,7 +166,7 @@ def midend(front_end_output,  num_filt):
 
     bn1 = tf.keras.layers.BatchNormalization()(conv1)
 
-    bn1_t = tf.transpose(bn1, [0, 1, 3, 2])
+    bn1_t = tf.keras.ops.transpose(bn1, [0, 1, 3, 2])
 
 
     # conv layer 2 (residual)
@@ -181,7 +181,7 @@ def midend(front_end_output,  num_filt):
 
     bn2 = tf.keras.layers.BatchNormalization()(conv2 )
 
-    conv2_t = tf.transpose(bn2, [0, 1, 3, 2])
+    conv2_t = tf.keras.ops.transpose(bn2, [0, 1, 3, 2])
 
     res2 = conv2_t + bn1_t
 
@@ -197,7 +197,7 @@ def midend(front_end_output,  num_filt):
 
     bn3 = tf.keras.layers.BatchNormalization()(conv3, )
 
-    conv3_t = tf.transpose(bn3, [0, 1, 3, 2])
+    conv3_t = tf.keras.ops.transpose(bn3, [0, 1, 3, 2])
 
     res3 = conv3_t + res2
 
