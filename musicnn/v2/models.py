@@ -208,7 +208,7 @@ def backend(feature_map, num_classes, output_units, type=None):
 
     # temporal pooling
     max_pool = tf.keras.ops.max(feature_map, axis=1)
-    mean_pool, var_pool = tf.nn.moments(feature_map, axes=[1])
+    mean_pool, var_pool = tf.keras.ops.moments(feature_map, axes=[1])
 
     tmp_pool = tf.keras.ops.concatenate([max_pool, mean_pool], axis=2)
 
