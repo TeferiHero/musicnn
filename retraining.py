@@ -120,8 +120,9 @@ def retrain(model_name='GENRES_MTT_musicnn', extract_features=True):
     print(modelv2.evaluate(test_ds))
     modelv2.fit(
         train_ds,
-        epochs=2
+        epochs=5
     )
+    modelv2.save("modelv2.keras")
     print(modelv2.evaluate(test_ds))
 
 
