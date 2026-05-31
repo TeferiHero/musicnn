@@ -80,7 +80,8 @@ def retrain(model_name='GENRES_MTT_musicnn', extract_features=True):
         # print(os.path.exists(ckpt_path))   
 
         ckpt_path = f"{ckpt_path}/"  
-        orig_model.load_weights(ckpt_path).expect_partial()
+        orig_ckpt = tf.train.Checkpoint(model=orig_model)
+        orig_ckpt.restore(ckpt_path).expect_partial()
         # modelv2.load_weights(ckpt_path, by_name=True, skip_mismatch=True).expect_partial()
         
 
