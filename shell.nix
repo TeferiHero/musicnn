@@ -2,7 +2,24 @@
 
 nixpkgs.mkShell {
   nativeBuildInputs = with nixpkgs; [
-     uv
+    uv
+    glib
+    zlib
+    libGL
+    fontconfig
+    xorg.libX11
+    libxkbcommon
+    freetype
+    dbus
+
+    qt6.qtbase
+    qt6.qtwayland
+
+    xorg.libxcb
+    xorg.xcbutil
+    xorg.xcbutilwm
+    xorg.xcbutilimage
+    xorg.xcbutilkeysyms
   ];
   shellHook = ''
     export CUDA_PATH=${nixpkgs.cudatoolkit}
