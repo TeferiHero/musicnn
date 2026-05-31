@@ -72,7 +72,7 @@ def frontend(x,  yInput, num_filt, type):
 
         # padding only time domain for an efficient 'same' implementation
         # (since we pool throughout all frequency afterwards)
-        input_pad_7 = tf.pad(normalized_input, [[0, 0], [3, 3], [0, 0], [0, 0]], "CONSTANT")
+        input_pad_7 = tf.keras.ops.pad(normalized_input, [[0, 0], [3, 3], [0, 0], [0, 0]], "CONSTANT")
 
         if '74' in type:
             f74 = timbral_block(inputs=input_pad_7,
@@ -154,7 +154,7 @@ def midend(front_end_output,  num_filt):
     front_end_output = tf.keras.ops.expand_dims(front_end_output, axis=3)
 
     # conv layer 1
-    x = tf.pad(front_end_output, [[0, 0], [3, 3], [0, 0], [0, 0]], "CONSTANT")
+    x = tf.keras.ops.pad(front_end_output, [[0, 0], [3, 3], [0, 0], [0, 0]], "CONSTANT")
 
     print(x.shape)
     conv1 = tf.keras.layers.Conv2D(
@@ -170,7 +170,7 @@ def midend(front_end_output,  num_filt):
 
 
     # conv layer 2 (residual)
-    x2 = tf.pad(bn1_t, [[0, 0], [3, 3], [0, 0], [0, 0]], "CONSTANT")
+    x2 = tf.keras.ops.pad(bn1_t, [[0, 0], [3, 3], [0, 0], [0, 0]], "CONSTANT")
 
     conv2 = tf.keras.layers.Conv2D(
         filters=num_filt,
@@ -186,7 +186,7 @@ def midend(front_end_output,  num_filt):
     res2 = conv2_t + bn1_t
 
     # conv layer 3 (residual)
-    x3 = tf.pad(res2, [[0, 0], [3, 3], [0, 0], [0, 0]], "CONSTANT")
+    x3 = tf.keras.ops.pad(res2, [[0, 0], [3, 3], [0, 0], [0, 0]], "CONSTANT")
 
     conv3 = tf.keras.layers.Conv2D(
         filters=num_filt,
