@@ -11,5 +11,6 @@ dependencies = [
     "pandas>=2.3.3",
     "pydot>=4.0.1",
     "tensorflow-io==0.35.*",
+    "tensorflow-model-optimization>=0.8.1",
     "tensorflow[and-cuda]==2.15.*",
 ]
