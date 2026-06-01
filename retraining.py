@@ -12,6 +12,9 @@ from musicnn.v2.extractor import extractor
 from musicnn.v2.tagger import top_tags
 from musicnn.v2.dataset import get_dataset
 
+import random
+random.seed(42)
+
 # file_name = './audio/joram-moments_of_clarity-08-solipsism-59-88.mp3'
 # # tags = top_tags(file_name, model='MTT_musicnn', print_tags=True)
 # tags = top_tags(file_name, model='MTT_musicnn', print_tags=True, input_length=29)
@@ -98,15 +101,17 @@ def retrain(model_name='GENRES_MTT_musicnn', extract_features=True):
         outputs=orig_model.layers[-2].output
     )
     x_orig = base_model.output
-    outputs = tf.keras.layers.Dense(num_classes_new, activation="softmax")(x_orig)
+    dense = tf.keras.layers.Dense(128, activation="relu", activity_regularizer=tf.keras.regularizers.L2(1e-5))(x_orig)
+    dropout = tf.keras.layers.Dropout(0.5)(dense)
+    outputs = tf.keras.layers.Dense(num_classes_new, activation="softmax")(dropout)
     base_model.trainable = False
     modelv2 = tf.keras.Model(
         inputs=base_model.input,
         outputs=outputs
     )
 
-    train_ds, val_ds, test_ds = get_dataset(augument_training=True)
-    modelv2.compile(optimizer='adam',
+    train_ds, val_ds, test_ds = get_dataset(augument_training=True, all_noise_ratio=0.25)
+    modelv2.compile(optimizer="adam",
               loss=keras.losses.SparseCategoricalCrossentropy(from_logits=False),
               metrics=['accuracy'])
     
@@ -115,11 +120,10 @@ def retrain(model_name='GENRES_MTT_musicnn', extract_features=True):
     print(modelv2.evaluate(test_ds))
     modelv2.fit(
         train_ds,
-        epochs=2
+        epochs=8
     )
     print(modelv2.evaluate(test_ds))
-
-
+    modelv2.save("modelv2.keras")
     
     
 
