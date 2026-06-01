@@ -25,6 +25,8 @@ def prune():
     pruned_model = tf.keras.models.clone_model(model, clone_function=apply_pruning)
 
     pruned_model.summary()
+    tf.keras.utils.plot_model(pruned_model, show_shapes=True, to_file="pruned.png")
+    return
 
     pruned_model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=1e-5),
               loss=keras.losses.SparseCategoricalCrossentropy(from_logits=False),
