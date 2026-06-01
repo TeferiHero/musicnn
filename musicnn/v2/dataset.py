@@ -182,13 +182,12 @@ def add_label_noise(noisy_labels_ratio, labels):
     # print(np.unique(labels, return_counts=True))
     if noisy_labels_ratio>0:
         idx = list(range(len(labels)))
-        random.seed(42)
         random.shuffle(idx)
         num_noise = int(noisy_labels_ratio*len(labels))
         noise_idx = idx[:num_noise]
         for i in range(len(labels)):
             if i in noise_idx:
-                noiselabel = random.randint(0, len(config.GENRES_LABELS))
+                noiselabel = random.randint(0, len(config.GENRES_LABELS) - 1)
                 labels[i] = noiselabel
     # print(np.unique(labels, return_counts=True))
     # print("--------------")
@@ -199,6 +198,7 @@ def add_noise_to_fma_dataset(noisy_labels_ratio=0):
     y_files = glob.glob(f"{config.OUTPUT_DIR}/*/y_*.npy")
     for y_file in y_files:
         labels = np.load(y_file)
+        print(f"There are {len(labels)} labels.")
         add_label_noise(noisy_labels_ratio, labels)
         new_filename = re.sub(r"y_(\d+)\.npy$", rf"ynoisy{int(noisy_labels_ratio * 100)}_\1.npy", y_file)
         np.save(new_filename, labels)
