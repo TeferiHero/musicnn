@@ -9,7 +9,7 @@ INPUT_LENGTH = 3
 BASE_DIR = "fma/data"
 AUDIO_DIR = f"{BASE_DIR}/fma_small"
 METADATA_DIR = f"{BASE_DIR}/fma_metadata"
-OUTPUT_DIR = f"{BASE_DIR}/melspectrograms{INPUT_LENGTH}"
+OUTPUT_DIR = f"{BASE_DIR}/melspectrograms_balanced{INPUT_LENGTH}"
 
 # Machine learning setup
 BATCH_SIZE = 1 # (size of the batch during prediction)

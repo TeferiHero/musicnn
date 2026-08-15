@@ -10,7 +10,58 @@ import random
 import re
 import tensorflow_io as tfio
 from musicnn.v2 import configuration as config
+import soundfile as sf
 
+def recreate_mp3_from_data(x, filename):
+    mel = x.numpy().astype(np.float32)
+    mel = (10**mel - 1) / 10000.0
+    audio = librosa.feature.inverse.mel_to_audio(
+        np.transpose(mel),
+        sr=config.SR,
+        n_fft=config.FFT_SIZE,
+        hop_length=config.FFT_HOP,
+    )
+    # sd.play(audio, config.SR)
+    # sd.wait()
+    print(f"{config.OUTPUT_DIR}/mp3/{filename}.wav")
+    sf.write(f"{config.OUTPUT_DIR}/mp3/{filename}.wav", audio, config.SR)
+
+def create_genre_test():
+    train_ds, val_ds, test_ds = get_dataset()
+    representatives = []
+    for cls in range(1, 17):
+        print(cls)
+        class_ds = (
+            train_ds
+            .unbatch()
+            .filter(lambda x, y: tf.equal(int(y), cls))
+            .take(3)
+        )
+        for x, y in class_ds:
+            representatives.append((x, y))
+    random.shuffle(representatives)
+
+
+    i = 0
+    for x, y in representatives:
+        i += 1
+        recreate_mp3_from_data(x, f"{i}")
+        print(f"{i}: {config.GENRES_LABELS[int(y)]}")
+
+
+def draw_dataset_histogram():
+    
+    train_ds, val_ds, test_ds = get_dataset()
+
+    labels = []
+
+    for _, y in train_ds.unbatch():
+        labels.append(int(y.numpy()))
+
+    plt.hist(labels, bins=range(min(labels), max(labels) + 2))
+    plt.xlabel("Class")
+    plt.ylabel("Count")
+    plt.show()
 
 def batch_data(audio_file, n_frames, overlap):
     '''For an efficient computation, we split the full music spectrograms in patches of length n_frames with overlap.
@@ -124,7 +175,7 @@ def create_melspectrogram_dataset(tracks, subdir_name, directory, OUTPUT_DIR, AU
         # np.save(output_filename, batch)
         # directory.loc[len(directory)] = [output_filename, val, subdir_name]
 
-        if i >= 1000:
+        if i >= 1000 or (whole_track and i >= 100):
             save_dataset_shard()
             i = 0
             saved_batches=None
@@ -137,7 +188,7 @@ def create_melspectrogram_dataset(tracks, subdir_name, directory, OUTPUT_DIR, AU
 
 
 
-def create_fma_dataset():
+def create_fma_dataset(include_whole_tracks=False):
 
     open("dataset.log", "w").close()
     open("unused.log", "w").close()
@@ -160,9 +211,9 @@ def create_fma_dataset():
     y_test = tracks.loc[small & test, ('track', 'genre_top')]
 
 
-    create_melspectrogram_dataset(y_train, "train", directory, config.OUTPUT_DIR, config.AUDIO_DIR)
-    create_melspectrogram_dataset(y_val, "val", directory, config.OUTPUT_DIR, config.AUDIO_DIR)
-    create_melspectrogram_dataset(y_test, "test", directory, config.OUTPUT_DIR, config.AUDIO_DIR)
+    create_melspectrogram_dataset(y_train, "train", directory, config.OUTPUT_DIR, config.AUDIO_DIR, whole_track=include_whole_tracks)
+    create_melspectrogram_dataset(y_val, "val", directory, config.OUTPUT_DIR, config.AUDIO_DIR, whole_track=include_whole_tracks)
+    create_melspectrogram_dataset(y_test, "test", directory, config.OUTPUT_DIR, config.AUDIO_DIR, whole_track=include_whole_tracks)
 
     directory.to_csv(f"{config.OUTPUT_DIR}/labels.csv", index=False)
     # y_test = tracks.loc[small & test, ('track', 'genre_top')]
@@ -320,8 +371,8 @@ def visualize_dataset(augument_training=False):
     for mel, label in train.take(1):
         break
 
-    print(mel.shape)
-    print(config.GENRES_LABELS[int(label)])
+    # print(mel.shape)
+    # print(config.GENRES_LABELS[int(label)])
 
     if len(mel.shape) == 3:
         mel = tf.squeeze(mel, axis=0)
